@@ -25,7 +25,7 @@ def obtener_mes_ano_desde_nombre(file_name: str) -> str:
         return "desconocido"
 
 
-def extraer_nombres_empleados(file):
+def extraer_nombres_empleados(file, file_name: str):
     """
     Extrae datos de empleados de un archivo CSV o Excel recibido como objeto.
 
@@ -39,11 +39,11 @@ def extraer_nombres_empleados(file):
     - mes_ano (ej. 'september_2025')
     """
 
-    mes_ano = obtener_mes_ano_desde_nombre(file)
+    mes_ano = obtener_mes_ano_desde_nombre(file_name)
 
     try:
         # Leer según extensión
-        if file.endswith(".csv"):
+        if file_name.endswith(".csv"):
             df = pd.read_csv(file, header=None)
         else:
             df = pd.read_excel(file, header=None)

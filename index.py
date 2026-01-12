@@ -24,7 +24,7 @@ def subir():
     file = request.files.get("file")
     if not file:
         return jsonify({"error": "No se envió ningún archivo"}), 400
-    data, mes_ano = asociar_empleados(file)
+    data, mes_ano = asociar_empleados(file, file.filename)
     subir_a_mongo(data, mes_ano)
     return jsonify({"message": "Archivo recibido"}), 200
 
