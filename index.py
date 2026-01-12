@@ -5,7 +5,7 @@ from leerAlumnos import leer_alumnos
 from login import verificar_usuario
 app= Flask(__name__)
 app.config['JSON_AS_ASCII'] = False
-CORS(app, origins=["http://localhost:5173"])
+CORS(app, origins=["https://localhost:3000"])
 @app.route("/", methods=["GET"])
 def index():
     return jsonify({"message": "Hello World"})
