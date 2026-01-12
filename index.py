@@ -3,6 +3,7 @@ from flask_cors import CORS
 from asociar import asociar_empleados, subir_a_mongo
 from leerAlumnos import leer_alumnos
 from login import verificar_usuario
+from subirPromedio import subir_promedio_mongo
 app= Flask(__name__)
 app.config['JSON_AS_ASCII'] = False
 CORS(app, origins=["https://localhost:3000"])
@@ -38,8 +39,8 @@ def subir_promedio():
     data = request.get_json()
     persona= data.get("persona")
     promedio= data.get("promedio")
-    
-    # Aquí iría la lógica para subir el promedio
-    return jsonify({"message": "Promedio subido"}), 200
+    subir_promedio_mongo(persona, promedio)
+    return jsonify({"message": f"Promedio de {persona} subido: {promedio}"}), 200
+
 if __name__ == "__main__":
     app.run(debug=True)

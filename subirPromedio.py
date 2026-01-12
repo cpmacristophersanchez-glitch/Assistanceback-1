@@ -13,7 +13,7 @@ def subir_promedio_mongo(nombre: str, promedio: float):
     Guarda o actualiza el promedio de un alumno en MongoDB usando solo su nombre.
     """
     if not nombre or promedio is None:
-        raise ValueError("nombre y promedio son obligatorios")
+        return ValueError("nombre y promedio son obligatorios")
 
     collection.update_one(
         {"Nombre completo": nombre},
@@ -21,7 +21,7 @@ def subir_promedio_mongo(nombre: str, promedio: float):
         upsert=True  # crea si no existe
     )
 
-    print(f"Promedio de {nombre} guardado en MongoDB: {promedio}")
+    return True
 
 if __name__ == "__main__":
     # Ejemplo de uso
