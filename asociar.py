@@ -52,24 +52,30 @@ def asociar_empleados(file, file_name: str):
     resultado = []
 
     for name, group in combinado.groupby("name"):
-        area = group["Área"].iloc[0]
-        equipo = group["Equipo"].iloc[0]
-        grupo = group["Grupo"].iloc[0]
-        promedio = group["Promedio"].iloc[0]
-
         # --- Manejar Grupo NaN ---
+        grupo = group["Grupo"].iloc[0]
         grupo_val = int(grupo) if pd.notna(grupo) and not isinstance(grupo, str) else None
 
-        # --- Sumar horas ---
+        # --- Total de horas ---
         total_minutos = 0
-        for tiempo in group["Total Diario"]:
+        hours_per_day = {}
+
+        for idx, row in group.iterrows():
+            tiempo = row["Total Diario"]
+            dia_str = row["Día"].strftime("%d") if pd.notna(row["Día"]) else f"{idx+1:02d}"
+
+            minutos_dia = 0
             if isinstance(tiempo, str) and ":" in tiempo:
                 h, m = map(int, tiempo.split(":"))
-                total_minutos += h * 60 + m
+                minutos_dia = h * 60 + m
+                total_minutos += minutos_dia
 
-        horas = total_minutos // 60
-        minutos = total_minutos % 60
-        horas_total = f"{horas:02d}:{minutos:02d}"
+            # Guardar horas por día en formato HH:MM
+            horas = minutos_dia // 60
+            minutos = minutos_dia % 60
+            hours_per_day[dia_str] = f"{horas:02d}:{minutos:02d}"
+
+        horas_total = f"{total_minutos // 60:02d}:{total_minutos % 60:02d}"
 
         # --- Días con registro ---
         registros = group[["Entrada", "Salida", "Nota"]].values
@@ -84,8 +90,8 @@ def asociar_empleados(file, file_name: str):
 
         emp_dict = {
             "name": name.title(),
-            "hoursweek": horas_total,
-            "days": max(dias_con_registro - 1, 0),
+            "hourstotal": horas_total,
+            "hoursperday": hours_per_day,
             "attendance": porcentaje,
             "mes_ano": mes_ano,
         }
@@ -93,6 +99,7 @@ def asociar_empleados(file, file_name: str):
         resultado.append(emp_dict)
 
     return resultado, mes_ano
+
 
 
 def subir_a_mongo(data, mes_ano):
