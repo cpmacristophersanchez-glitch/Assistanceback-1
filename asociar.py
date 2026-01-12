@@ -20,6 +20,8 @@ if not all([MONGO_URI, MONGO_DB]):
 client = MongoClient(MONGO_URI)
 db = client[MONGO_DB]
 
+
+
 def asociar_empleados(file, file_name: str):
     # --- Leer archivo de asistencia ---
     empleado_df, mes_ano = extraer_nombres_empleados(file, file_name)
@@ -45,27 +47,22 @@ def asociar_empleados(file, file_name: str):
     combinado["Área"] = combinado["Área"].fillna("Sin área")
     combinado["Equipo"] = combinado["Equipo"].fillna("Sin equipo")
 
-    # --- Asegurarse de que Día sea datetime ---
-    combinado["Día"] = pd.to_datetime(combinado["Día"], errors="coerce", dayfirst=True)
-
     resultado = []
 
     for name, group in combinado.groupby("name"):
         total_minutos = 0
         hours_per_day = {}
 
-        for idx, row in group.iterrows():
-            if pd.isna(row["Día"]):
-                continue  # saltar este registro si no hay fecha
-
-            dia_val = row["Día"].strftime("%d/%m/%Y")
-            tiempo = row.get("Total Diario", None)
+        # --- Generar días secuenciales desde 01-mes_ano ---
+        for i, tiempo in enumerate(group["Total Diario"], start=1):
+            dia_val = f"{i:02d}-{mes_ano}"  # "01-MM/YYYY", "02-MM/YYYY", etc.
 
             if isinstance(tiempo, str) and ":" in tiempo:
                 h, m = map(int, tiempo.split(":"))
                 minutos_dia = h * 60 + m
             else:
                 minutos_dia = 0
+
             total_minutos += minutos_dia
             hours_per_day[dia_val] = f"{minutos_dia // 60:02d}:{minutos_dia % 60:02d}"
 
@@ -93,6 +90,7 @@ def asociar_empleados(file, file_name: str):
         resultado.append(emp_dict)
 
     return resultado, mes_ano
+
 
 
 
