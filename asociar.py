@@ -56,7 +56,7 @@ def asociar_empleados(file, file_name: str):
         hours_per_day = {}
 
         for idx, row in group.iterrows():
-            dia_val = row["Día"].strftime("%d/%m/%Y") if pd.notna(row["Día"]) else f"Dia{idx+1}"
+            dia_val = row["Día"].strftime("%d/%m/%Y") 
             tiempo = row.get("Total Diario", None)
 
             if isinstance(tiempo, str) and ":" in tiempo:
