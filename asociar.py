@@ -101,9 +101,9 @@ def subir_a_mongo(data, mes_ano):
     if data:
         # Insertar registros
         coleccion_mes.insert_many(data)
-        print(f"✅ Se subieron {len(data)} registros a la colección '{mes_ano}'")
+        return (f"✅ Se subieron {len(data)} registros a la colección '{mes_ano}'")
     else:
-        print("⚠️ No hay datos para subir")
+        return ("⚠️ No hay datos para subir")
 
 
 if __name__ == "__main__":
