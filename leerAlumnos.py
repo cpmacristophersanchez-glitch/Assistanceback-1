@@ -13,7 +13,7 @@ def leer_alumnos(mongo_uri=None, mongo_db=None):
     {
         'Nombre Completo': {
             'datos personales': {...},
-            'october_2025': {'attendance': ..., 'hoursweek': ..., 'days': ...},
+            'october_2025': {'attendance': ..., 'hourstotal': ..., 'hoursperday': {...}},
             'september_2025': {...},
             ...
         }
@@ -37,8 +37,8 @@ def leer_alumnos(mongo_uri=None, mongo_db=None):
     empleados_df = pd.DataFrame(empleados_docs)
     empleados_df["name"] = empleados_df["Nombre completo"].str.strip().str.lower()
 
-    # 🔹 Obtener todas las colecciones que no sean 'Employee'
-    colecciones = [c for c in db.list_collection_names() if c != "Employee" and c != "AdminUsers"]
+    # 🔹 Obtener todas las colecciones que no sean 'Employee' ni 'AdminUsers'
+    colecciones = [c for c in db.list_collection_names() if c not in ["Employee", "AdminUsers"]]
 
     # 🔹 Diccionario final con datos personales y datos por mes
     datos_por_empleado = {}
@@ -69,11 +69,11 @@ def leer_alumnos(mongo_uri=None, mongo_db=None):
                 "Área": fila.get("Área", "N/A")
             }
 
-            # Datos mensuales
+            # Datos mensuales: ahora con hourstotal y hoursperday
             info_mes = {
                 "attendance": fila.get("attendance", 0),
-                "hoursweek": fila.get("hoursweek", "00:00"),
-                "days": fila.get("days", 0)
+                "hourstotal": fila.get("hourstotal", "00:00"),
+                "hoursperday": fila.get("hoursperday", {})  # dict con cada día
             }
 
             if nombre not in datos_por_empleado:
