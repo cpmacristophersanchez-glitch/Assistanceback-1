@@ -7,7 +7,7 @@ from subirPromedio import subir_promedio_mongo
 from historial import obtener_historial_de_archivos
 app= Flask(__name__)
 app.config['JSON_AS_ASCII'] = False
-CORS(app, origins=["https://assistance-front-1.vercel.app/"])
+CORS(app)
 @app.route("/", methods=["GET"])
 def index():
     return jsonify({"message": "Hello World"})
